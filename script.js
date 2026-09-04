@@ -48,15 +48,19 @@
     }
   });
 
-  // 2. Color Palette Management (Emerald / Orange / Purple)
+  // 2. Color Palette Management (Neutral / Orange / Purple)
   const paletteButtons = document.querySelectorAll('.palette-btn');
 
   function getPreferredPalette() {
     const stored = localStorage.getItem('palette');
-    if (stored === 'emerald' || stored === 'orange' || stored === 'purple') {
+    if (stored === 'neutral' || stored === 'orange' || stored === 'purple') {
       return stored;
     }
-    return 'emerald';
+    // Backward compatibility: migrate 'emerald' to 'neutral'
+    if (stored === 'emerald') {
+      return 'neutral';
+    }
+    return 'neutral';
   }
 
   function applyPalette(palette) {
@@ -152,5 +156,27 @@
       }
     });
   });
+
+  // 4. Mobile Menu Drawer Toggle
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileNav = document.getElementById('mobile-nav');
+
+  if (mobileMenuBtn && mobileNav) {
+    mobileMenuBtn.addEventListener('click', function () {
+      const isOpen = mobileNav.classList.toggle('is-open');
+      mobileMenuBtn.classList.toggle('is-open', isOpen);
+      mobileMenuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      mobileNav.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    });
+
+    document.querySelectorAll('.mobile-nav-link').forEach(function (link) {
+      link.addEventListener('click', function () {
+        mobileNav.classList.remove('is-open');
+        mobileMenuBtn.classList.remove('is-open');
+        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        mobileNav.setAttribute('aria-hidden', 'true');
+      });
+    });
+  }
 
 })();
